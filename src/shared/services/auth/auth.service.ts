@@ -4,11 +4,24 @@ import { User } from '../../models/user/user.class';
 import {catchError, map} from 'rxjs/operators';
 import {IAuth} from '../../../components/auth/auth.interface';
 import {throwError} from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import {LogNotificationService} from "../log-notification.service";
+import {Router} from "@angular/router";
+import {BrowserLocalStorageService} from "../../ssr-services/browser-local-storage.service";
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService extends ApiService {
+  constructor(
+    protected _browserLocalStorage: BrowserLocalStorageService,
+    protected _http: HttpClient,
+    protected _notification: LogNotificationService,
+    protected _router: Router
+  ) {
+    super(_http, _notification, _router);
+  }
+
   register(user: User) {
     return this
       .sendPost(this.getEndpoint('register'), user)
@@ -29,12 +42,12 @@ export class AuthService extends ApiService {
     return this.sendPost(this.getEndpoint('refresh-token'));
   }
   setToken(token): void {
-    localStorage.setItem('token', token);
+    this._browserLocalStorage.setItem('token', token);
   }
-  static getToken(): string {
-    return localStorage.getItem('token');
+  getToken(): string | null {
+    return this._browserLocalStorage.getItem('token');
   }
-  static isLoggedIn(): boolean {
+  isLoggedIn(): boolean {
     return this.getToken() !== null;
   }
   backendLogout():void {
@@ -52,7 +65,7 @@ export class AuthService extends ApiService {
       );
   }
   frontendLogout(): void {
-    localStorage.removeItem('token');
+    this._browserLocalStorage.removeItem('token');
     this._router.navigate(['/']);
   }
 }

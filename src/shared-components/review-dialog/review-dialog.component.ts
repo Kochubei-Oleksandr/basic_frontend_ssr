@@ -20,6 +20,7 @@ export class ReviewDialog implements OnInit {
     private _userService: UserService,
     private _messageService: MessageService,
     private _logNotificationService: LogNotificationService,
+    private _authService: AuthService,
     public serverValidationForm: ServerValidationFormService,
   ) { }
 
@@ -28,7 +29,7 @@ export class ReviewDialog implements OnInit {
     this.createForm();
   }
   getUserData(): void {
-    if (AuthService.getToken()) {
+    if (this._authService.getToken()) {
       this._userService.view().subscribe((res: User) => {
         this.reviewForm.patchValue(res);
       });

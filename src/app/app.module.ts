@@ -2,10 +2,9 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { AppRoutingModule } from './app-routing.module';
 import {ReactiveFormsModule} from '@angular/forms';
-import {TranslateLoader, TranslateModule} from '@ngx-translate/core';
-import {HTTP_INTERCEPTORS, HttpClient, HttpClientModule} from '@angular/common/http';
-import {TranslateHttpLoader} from '@ngx-translate/http-loader';
+import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import {I18nModule} from "../shared/ssr-services/i18n/i18n.module";
 
 //landing modules
 import { LandingComponent } from '../components/landing/landing.component';
@@ -104,15 +103,9 @@ const ANGULAR_MATERIAL_MODULES = [
     ...SHARED_PIPES,
   ],
   imports: [
-    BrowserModule,
+    BrowserModule.withServerTransition({ appId: 'serverApp' }),
     HttpClientModule,
-    TranslateModule.forRoot({
-      loader: {
-        provide: TranslateLoader,
-        useFactory: httpTranslateLoader,
-        deps: [HttpClient]
-      }
-    }),
+    I18nModule,
     AppRoutingModule,
     BrowserAnimationsModule,
     ReactiveFormsModule,
@@ -124,7 +117,3 @@ const ANGULAR_MATERIAL_MODULES = [
   bootstrap: [AppComponent]
 })
 export class AppModule {}
-
-export function httpTranslateLoader(http: HttpClient) {
-  return new TranslateHttpLoader(http);
-}

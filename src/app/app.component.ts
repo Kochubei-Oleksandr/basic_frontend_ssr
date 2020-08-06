@@ -1,6 +1,5 @@
 import {Component, OnInit} from '@angular/core';
 import {Router} from '@angular/router';
-import {LanguageService} from '../shared/services/language.service';
 import {InitialRequestsService} from '../shared/services/initial-requests.service';
 
 @Component({
@@ -11,11 +10,8 @@ import {InitialRequestsService} from '../shared/services/initial-requests.servic
 export class AppComponent implements OnInit {
   constructor (
     private _router: Router,
-    private _languageService: LanguageService,
     private _initialRequestsService: InitialRequestsService,
-  ) {
-    _languageService.ngOnInit();
-  }
+  ) { }
 
   isHomeRoute() {
     return this._router.url === '/';

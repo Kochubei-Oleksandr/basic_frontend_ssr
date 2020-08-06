@@ -34,7 +34,7 @@ export class NavbarComponent {
   }
 
   isLoggedIn() {
-    return AuthService.isLoggedIn();
+    return this._authService.isLoggedIn();
   }
   getClassDecorator(mainClass: string): string {
     return this.isLanding

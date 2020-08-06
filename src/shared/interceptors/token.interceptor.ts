@@ -8,13 +8,16 @@ import {IAuth} from '../../components/auth/auth.interface';
 
 @Injectable()
 export class TokenInterceptor implements HttpInterceptor {
-  constructor(private _injector: Injector) { }
+  constructor(
+    private _injector: Injector,
+    private _authService: AuthService,
+  ) { }
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    if (AuthService.getToken()) {
+    if (this._authService.getToken()) {
       request = request.clone({
         setHeaders: {
-          'Authorization': 'Bearer ' + AuthService.getToken()
+          'Authorization': 'Bearer ' + this._authService.getToken()
         }
       });
     }
@@ -30,12 +33,10 @@ export class TokenInterceptor implements HttpInterceptor {
   }
 
   private handle401Error(request: HttpRequest<any>, next: HttpHandler) {
-    const authService = this._injector.get(AuthService);
-
-    return authService.refreshToken().pipe(
+    return this._authService.refreshToken().pipe(
       switchMap((res: IAuth) => {
         if (res.token) {
-          authService.setToken(res.token);
+          this._authService.setToken(res.token);
           request = request.clone({
             setHeaders: {
               'Authorization': 'Bearer ' + res.token
@@ -43,11 +44,11 @@ export class TokenInterceptor implements HttpInterceptor {
           });
           return next.handle(request);
         } else {
-          authService.frontendLogout();
+          this._authService.frontendLogout();
         }
       }),
       catchError(err => {
-        authService.frontendLogout();
+        this._authService.frontendLogout();
         return throwError(err);
       })
     );

@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
 import {TranslateService} from '@ngx-translate/core';
-import {LocalStorageService} from './local-storage.service';
+import {BrowserLocalStorageService} from "../ssr-services/browser-local-storage.service";
 
 @Injectable()
 export class InitialRequestsService {
   constructor (
     private _translateService: TranslateService,
-    private _localStorageService: LocalStorageService,
+    protected _browserLocalStorage: BrowserLocalStorageService,
   ) { }
 
   languageChangeRequests(): void {
@@ -19,7 +19,7 @@ export class InitialRequestsService {
     //queries to get static data from the database
   }
   authorized(): void {
-    if (localStorage.getItem('token')) {
+    if (this._browserLocalStorage.getItem('token')) {
       //queries to get static data from the database
     }
   }
